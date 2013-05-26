@@ -1,70 +1,69 @@
 package com.yjpark.study;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApiUsersControllerTest {
 
+	private static final String EMAIL = "email@slipp.net";
+	private static final String TRUE = "true";
+	private static final String FALSE = "false";
+	private static final String USER_ID = "userId";
+	private SocialUser USER1 = new SocialUser(1L);
+	private ApiUserController dut;
+	
 	@Mock
-	private SocialUserService userService;
+	private CheckDupService checkDupService;
+	private ProviderType providerType = ProviderType.slipp;
 
-	@InjectMocks
-	private ApiUserController dut = new ApiUserController();
+	@Before
+	public void init() {
+		dut = new ApiUserController(checkDupService);
+	}
 
 	@Test
 	public void duplicateUserId_login_isSameUser() {
-		String userId = "userId";
-		SocialUser loginUser = new SocialUser(1L);
-		when(userService.findByUserId(userId)).thenReturn(loginUser);
+		when(checkDupService.duplicateUserId(any(SocialUser.class), anyString())).thenReturn(false);
 
-		String actual = dut.duplicateUserId(loginUser, userId);
-		assertThat(actual, is("false"));
+		String actual = dut.duplicateUserId(USER1, USER_ID);
+		assertThat(actual, is(FALSE));
 	}
 
 	@Test
 	public void duplicateUserId_login_isNotSameUser() {
-		String userId = "userId";
-		SocialUser loginUser = new SocialUser(1L);
-		when(userService.findByUserId(userId)).thenReturn(loginUser);
+		when(checkDupService.duplicateUserId(any(SocialUser.class), anyString())).thenReturn(true);
 
-		String actual = dut.duplicateUserId(new SocialUser(2L), userId);
-		assertThat(actual, is("true"));
+		String actual = dut.duplicateUserId(new SocialUser(2L), USER_ID);
+		assertThat(actual, is(TRUE));
 	}
-
 	
 	@Test
 	public void duplicateEmail_doesnot_existed() {
-		String actual = dut.duplicateEmail(SocialUser.GUEST_USER, "userId",	ProviderType.slipp);
-		assertThat(actual, is("false"));
+		String actual = dut.duplicateEmail(USER1, USER_ID,	ProviderType.slipp);
+		assertThat(actual, is(FALSE));
 	}
 
 	@Test
 	public void duplicateEmail_login_isSameUser() {
-		String email = "email@slipp.net";
-		ProviderType providerType = ProviderType.slipp;
-		SocialUser loginUser = new SocialUser(1L);
-		when(userService.findByEmailAndProviderId(email, providerType)).thenReturn(loginUser);
+		when(checkDupService.duplicateEmail(any(SocialUser.class), anyString(), any(ProviderType.class))).thenReturn(false);
 
-		String actual = dut.duplicateEmail(loginUser, email, providerType);
-		assertThat(actual, is("false"));
+		String actual = dut.duplicateEmail(USER1, EMAIL, providerType);
+		assertThat(actual, is(FALSE));
 	}
 
 	@Test
 	public void duplicateEmail_login_isNotSameUser() {
-		String email = "email@slipp.net";
-		ProviderType providerType = ProviderType.slipp;
-		SocialUser loginUser = new SocialUser(1L);
-		when(userService.findByEmailAndProviderId(email, providerType)).thenReturn(loginUser);
+		when(checkDupService.duplicateEmail(any(SocialUser.class), anyString(), any(ProviderType.class))).thenReturn(true);
 
-		String actual = dut.duplicateEmail(new SocialUser(2L), email, providerType);
-		assertThat(actual, is("true"));
+		String actual = dut.duplicateEmail(new SocialUser(2L), EMAIL, providerType);
+		assertThat(actual, is(TRUE));
 	}
 }

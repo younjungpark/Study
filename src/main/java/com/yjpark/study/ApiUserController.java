@@ -11,51 +11,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ApiUserController {
 	private static Logger log = LoggerFactory.getLogger(ApiUserController.class);
-
-    @Resource(name = "socialUserService")
+	private CheckDupService checkDupService;
+	
+	public ApiUserController(CheckDupService checkDupService) {
+		this.checkDupService = checkDupService;
+	}
+	
+	@Resource(name = "socialUserService")
     private SocialUserService userService;
 
     @RequestMapping("/duplicate_userid")
     public @ResponseBody String duplicateUserId(@LoginUser(required = false) SocialUser loginUser, String userId) {
         log.debug("userId : {}", userId);
 
-        SocialUser socialUser = userService.findByUserId(userId);
-        if (socialUser == null) {
-            return "false";
-        }
-        
-        if (socialUser.isSameUser(loginUser)) {
-            return "false";
-        }
-        
-        return "true";
+        return Boolean.toString(checkDupService.duplicateUserId(loginUser, userId));
     }
 
     @RequestMapping("/duplicate_email")
-    public @ResponseBody String duplicateEmail(@LoginUser(required = false) String guestUser, String email, 
+    public @ResponseBody String duplicateEmail(@LoginUser(required = false) SocialUser guestUser, String email, 
     		ProviderType providerType) {
         log.debug("email : {}", email);
 
-        SocialUser socialUser = userService.findByEmailAndProviderId(email, providerType);
-        if (socialUser == null) {
-            return "false";
-        }
-        if (socialUser.isSameUser(guestUser)) {
-            return "false";
-        }
-        return "true";
-    }
-
-	public String duplicateEmail(SocialUser loginUser, String email, ProviderType providerType) {
-        log.debug("email : {}", email);
-
-        SocialUser socialUser = userService.findByEmailAndProviderId(email, providerType);
-        if (socialUser == null) {
-            return "false";
-        }
-        if (socialUser.isSameUser(loginUser)) {
-            return "false";
-        }
-        return "true";
+        return Boolean.toString(checkDupService.duplicateEmail(guestUser, email, providerType));
     }
 }
