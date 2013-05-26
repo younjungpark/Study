@@ -7,9 +7,6 @@ public class CheckDupServiceImpl implements CheckDupService {
 		this.userService = userService;
 	}
 	
-    /* (non-Javadoc)
-	 * @see com.yjpark.study.CheckDupService#duplicateUserId(com.yjpark.study.SocialUser, java.lang.String)
-	 */
     @Override
 	public boolean duplicateUserId(SocialUser loginUser, String userId) {
 
@@ -17,10 +14,6 @@ public class CheckDupServiceImpl implements CheckDupService {
         return checkUserIsSame(loginUser, socialUser);
     }
 
-
-    /* (non-Javadoc)
-	 * @see com.yjpark.study.CheckDupService#duplicateEmail(com.yjpark.study.SocialUser, java.lang.String, com.yjpark.study.ProviderType)
-	 */
     @Override
 	public boolean duplicateEmail(SocialUser loginUser, String email, ProviderType providerType) {
         SocialUser socialUser = userService.findByEmailAndProviderId(email, providerType);
