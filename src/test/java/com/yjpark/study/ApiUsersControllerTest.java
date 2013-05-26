@@ -64,7 +64,7 @@ public class ApiUsersControllerTest {
 		SocialUser loginUser = new SocialUser(1L);
 		when(userService.findByEmailAndProviderId(email, providerType)).thenReturn(loginUser);
 
-		String actual = dut.duplicateEmail(loginUser, email, providerType);
-		assertThat(actual, is("false"));
+		String actual = dut.duplicateEmail(new SocialUser(2L), email, providerType);
+		assertThat(actual, is("true"));
 	}
 }

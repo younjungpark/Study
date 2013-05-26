@@ -1,21 +1,26 @@
 package com.yjpark.study;
 
 public class SocialUser {
-
-	public static final String GUEST_USER = "guest";
-
+	static final String GUEST_USER = "guest";
+	private long userNum;
+	
 	public SocialUser(long l) {
-		// TODO Auto-generated constructor stub
+		this.userNum = l;
 	}
 
 	public boolean isSameUser(String guestUser) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public boolean isSameUser(SocialUser loginUser) {
-		// TODO Auto-generated method stub
-		return false;
+		return loginUser.getUserNum() == this.userNum;
 	}
 
+	public long getUserNum() {
+		return userNum;
+	}
+
+	public void setUserNum(long userNum) {
+		this.userNum = userNum;
+	}
 }

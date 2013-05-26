@@ -46,14 +46,16 @@ public class ApiUserController {
         return "true";
     }
 
-	public String checkDuplicate(String guestUser, Object object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String duplicateEmail(SocialUser loginUser, String email, ProviderType providerType) {
+        log.debug("email : {}", email);
 
-	public String duplicateEmail(SocialUser loginUser, String email,
-			ProviderType providerType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        SocialUser socialUser = userService.findByEmailAndProviderId(email, providerType);
+        if (socialUser == null) {
+            return "false";
+        }
+        if (socialUser.isSameUser(loginUser)) {
+            return "false";
+        }
+        return "true";
+    }
 }
