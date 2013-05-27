@@ -42,7 +42,7 @@ public class ApiUsersControllerTest {
 	
 	@Test
 	public void duplicateEmail_doesnot_existed() {
-		String actual = dut.duplicateEmail(SocialUser.GUEST_USER, "userId",	ProviderType.slipp);
+		String actual = dut.duplicateEmail(new SocialUser(1L), "userId",	ProviderType.slipp);
 		assertThat(actual, is("false"));
 	}
 

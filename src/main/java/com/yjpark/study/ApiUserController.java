@@ -32,7 +32,7 @@ public class ApiUserController {
     }
 
     @RequestMapping("/duplicate_email")
-    public @ResponseBody String duplicateEmail(@LoginUser(required = false) String guestUser, String email, 
+    public @ResponseBody String duplicateEmail(@LoginUser(required = false) SocialUser guestUser, String email, 
     		ProviderType providerType) {
         log.debug("email : {}", email);
 
@@ -41,19 +41,6 @@ public class ApiUserController {
             return "false";
         }
         if (socialUser.isSameUser(guestUser)) {
-            return "false";
-        }
-        return "true";
-    }
-
-	public String duplicateEmail(SocialUser loginUser, String email, ProviderType providerType) {
-        log.debug("email : {}", email);
-
-        SocialUser socialUser = userService.findByEmailAndProviderId(email, providerType);
-        if (socialUser == null) {
-            return "false";
-        }
-        if (socialUser.isSameUser(loginUser)) {
             return "false";
         }
         return "true";
